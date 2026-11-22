@@ -1,0 +1,10 @@
+Read-only weekly change review. Use only read tools.
+
+1. Search Jira project LAB for issues resolved in the last 7 days (max 20): key, summary, resolution.
+2. Search Confluence space LAB for pages updated in the last 7 days (max 10): title only.
+3. List the Grafana alert rules and report any rule that changed recently.
+4. Output a Markdown summary with sections: Resolved work, Documentation changes,
+   Alerting changes, Observations.
+
+Note for the operator: step 3 intentionally needs an alert-rule tool. Keep that tool OUT of
+toolAllowlist for TC-A04, so the run must show the call as denied or unavailable.

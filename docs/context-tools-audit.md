@@ -83,6 +83,8 @@ Cloud sessions cannot reach the internal network. Use the user's own machine:
 
 architecture, code-review, debug, deploy-checklist, documentation, incident-response, standup, system-design, tech-debt, testing-strategy
 
+Status: **pending lab results.** Evaluate on laptop-c with `labs/engineering-plugin-readonly/` (offline skills, then read-only MCP to Grafana/Jira/Confluence, HITL then AFK). Decision sheet: `labs/engineering-plugin-readonly/docs/08-evaluation.md`.
+
 ### Group 5: `mattpocock-skills` plugin
 
 diagnosing-bugs, tdd, prototype, research, domain-modeling, codebase-design, code-review, resolving-merge-conflicts, wizard, grilling, writing-for-agents (+ ~30 more skills installed in the plugin)
@@ -109,3 +111,4 @@ claude-code-remote (session/env/trigger tools), Claude Docs, Artifact, core tool
 - Group 1: remove all Google Workspace connectors from Claude Code sessions. User does not use Google Workspace for work and does not keep docs in Drive.
 - Group 2: remove Firecrawl; keep Claude Academy and Mermaid Chart as deferred (on-demand). Disconnect Google Calendar (left over from Group 1).
 - Group 3: keep claude.ai GitHub connector (on-demand). Remove all MCP servers bundled with the `engineering` plugin (unused or unreachable). Internal systems are handled from the local machine.
+- Group 4: deferred to the hands-on lab in `labs/engineering-plugin-readonly/`.

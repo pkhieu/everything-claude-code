@@ -1,0 +1,43 @@
+{
+  "$comment": "Read-only policy for hooks/mcp-readonly-guard.js. Edit toolAllowlist after discovering real tool names in Phase 3 (/mcp). Anything not listed is denied in AFK mode.",
+  "allowedServers": ["grafana", "atlassian"],
+  "readVerbs": [
+    "get", "list", "search", "query", "find", "read", "fetch",
+    "describe", "show", "lookup", "view", "count"
+  ],
+  "writeVerbs": [
+    "create", "update", "delete", "remove", "add", "set", "patch", "put", "post",
+    "edit", "write", "upsert", "insert", "modify", "change", "rename", "move",
+    "archive", "restore", "upload", "attach", "link", "unlink", "assign",
+    "transition", "comment", "reply", "resolve", "close", "reopen", "merge",
+    "execute", "run", "trigger", "invoke", "import", "publish", "approve",
+    "silence", "mute", "ack", "acknowledge", "enable", "disable", "batch"
+  ],
+  "toolAllowlist": {
+    "grafana": [],
+    "atlassian": []
+  },
+  "toolDenylist": {
+    "grafana": ["query_sql", "query_influxdb"],
+    "atlassian": []
+  },
+  "bashDenyPatterns": [
+    "\\bcurl\\b",
+    "\\bwget\\b",
+    "\\bInvoke-(WebRequest|RestMethod)\\b",
+    "\\biwr\\b",
+    "\\birm\\b",
+    "\\bhttpie\\b|\\bhttp\\s+(GET|POST|PUT|PATCH|DELETE)\\b",
+    "\\bnc\\b|\\bncat\\b|\\bnetcat\\b|\\btelnet\\b",
+    "\\bssh\\b|\\bscp\\b|\\bsftp\\b|\\brsync\\b",
+    "(^|[;&|]\\s*)(env|printenv|set)\\s*($|[;&|])",
+    "\\$\\{?[A-Z_]*(TOKEN|SECRET|PASSWORD|API_KEY)[A-Z_]*\\}?",
+    "\\$env:[A-Za-z_]*(TOKEN|SECRET|PASSWORD|API_KEY)",
+    "\\.env\\b",
+    "\\bkubectl\\s+(apply|create|delete|edit|patch|replace|scale|rollout|drain|cordon|uncordon|label|annotate|exec|cp)\\b",
+    "\\bhelm\\s+(install|upgrade|uninstall|rollback|delete)\\b",
+    "\\bterraform\\s+(apply|destroy|import|state)\\b",
+    "\\bansible(-playbook)?\\b",
+    "\\bgit\\s+push\\b"
+  ]
+}

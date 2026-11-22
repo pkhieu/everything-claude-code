@@ -1,0 +1,9 @@
+2026-11-20T09:38:12Z kube-apiserver prod-01-cp-1 W1120 09:38:12 etcd retry: slow request "range /registry/pods/mes-production" took 1.21s
+2026-11-20T09:39:47Z etcd prod-01-etcd-2 W | etcdserver: apply request took too long (912ms, expected < 100ms)
+2026-11-20T09:40:03Z etcd prod-01-etcd-2 W | wal: sync duration of 1.43s, expected less than 1s
+2026-11-20T09:40:05Z kube-apiserver prod-01-cp-2 E1120 09:40:05 status.go: "Unhandled Error" err="etcdserver: request timed out"
+2026-11-20T09:41:30Z kube-apiserver prod-01-cp-1 E1120 09:41:30 timeout.go: post-timeout activity - verb=LIST resource=pods code=504
+2026-11-20T09:42:10Z etcd prod-01-etcd-2 W | etcdserver: failed to send out heartbeat on time (exceeded the 100ms timeout for 388ms)
+2026-11-20T09:43:55Z node-exporter prod-01-etcd-2 node_disk_io_time_seconds_total{device="sdb"} saturation ~ 98%
+2026-11-20T09:44:20Z kube-apiserver prod-01-cp-3 W1120 09:44:20 etcd retry: slow request "txn" took 2.04s
+2026-11-20T09:45:02Z backup-agent prod-01-etcd-2 INFO starting scheduled VM snapshot for volume sdb (datastore ds-gold-07)

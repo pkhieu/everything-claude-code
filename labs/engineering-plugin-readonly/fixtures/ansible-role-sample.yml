@@ -1,0 +1,25 @@
+# roles/node_exporter/tasks/main.yml (fictional sample)
+- name: download node_exporter
+  shell: curl -L https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz -o /tmp/ne.tgz
+  ignore_errors: yes
+
+- name: extract
+  shell: tar xzf /tmp/ne.tgz -C /opt && cp /opt/node_exporter-1.3.1.linux-amd64/node_exporter /usr/local/bin/
+
+- name: create service
+  shell: |
+    cat > /etc/systemd/system/node_exporter.service <<EOT
+    [Service]
+    ExecStart=/usr/local/bin/node_exporter --web.listen-address=:9100
+    EOT
+    systemctl daemon-reload
+    systemctl restart node_exporter
+
+- name: configure basic auth
+  lineinfile:
+    path: /etc/node_exporter/web.yml
+    line: "basic_auth_users: {admin: 'Plant2024!'}"
+    create: yes
+
+- name: open firewall
+  shell: firewall-cmd --add-port=9100/tcp --permanent && firewall-cmd --reload

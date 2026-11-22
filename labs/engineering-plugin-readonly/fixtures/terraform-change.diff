@@ -1,0 +1,34 @@
+diff --git a/modules/bastion/main.tf b/modules/bastion/main.tf
+--- a/modules/bastion/main.tf
++++ b/modules/bastion/main.tf
+@@ -12,18 +12,16 @@ resource "openstack_networking_secgroup_rule_v2" "ssh" {
+   direction         = "ingress"
+   ethertype         = "IPv4"
+   protocol          = "tcp"
+   port_range_min    = 22
+   port_range_max    = 22
+-  remote_ip_prefix  = var.admin_cidr
++  remote_ip_prefix  = "0.0.0.0/0"
+   security_group_id = openstack_networking_secgroup_v2.bastion.id
+ }
+
+ resource "openstack_blockstorage_volume_v3" "data" {
+   name        = "bastion-data"
+   size        = 100
+-  volume_type = "encrypted-ssd"
++  volume_type = "ssd"
+-  lifecycle {
+-    prevent_destroy = true
+-  }
+ }
+
+ resource "openstack_compute_instance_v2" "bastion" {
+   name      = "bastion-${var.env}"
+   flavor_id = var.flavor_id
++  user_data = <<-EOT
++    #cloud-config
++    chpasswd:
++      list: |
++        root:ChangeMe123
++      expire: false
++  EOT
