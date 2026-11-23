@@ -87,7 +87,25 @@ Status: **pending lab results.** Evaluate on laptop-c with `labs/engineering-plu
 
 ### Group 5: `mattpocock-skills` plugin
 
-diagnosing-bugs, tdd, prototype, research, domain-modeling, codebase-design, code-review, resolving-merge-conflicts, wizard, grilling, writing-for-agents (+ ~30 more skills installed in the plugin)
+Decision: **Keep plugin** (Keep-Global). 25 skills declared; only 11 are model-invocable and cost context (~450 tokens/turn). The other 14 have `disable-model-invocation: true` (zero context cost, slash command only).
+
+| Skill | Invocation | Fit | Note |
+|-------|------------|-----|------|
+| wizard | model | High | Bash wizard for human-only steps; CI-secret helper targets GitHub `gh` |
+| grilling | model | High | Design-tree interview with recommended answers |
+| writing-for-agents | model | High | Skills / CLAUDE.md authoring; context vs cognitive load |
+| diagnosing-bugs | model | High | Feedback-loop-first; compare with `engineering:debug` in the lab |
+| research | model | Medium-high | Background agent, primary sources, Markdown output |
+| code-review | model | Medium | Standards + Spec axes; needs `/setup-matt-pocock-skills`; differs from built-in bug-focused `/code-review` |
+| tdd | model | Medium | Seams agreed first; compare with `engineering:testing-strategy` |
+| resolving-merge-conflicts | model | Medium | Risky defaults: commits automatically, never aborts |
+| prototype | model | Low-medium | |
+| domain-modeling | model | Low-medium | |
+| codebase-design | model | Low | |
+| teach, handoff, wait-what, grill-me | user-only | High/Medium | Zero context cost |
+| to-spec, to-tickets, triage, wayfinder | user-only | Low | Need a reachable issue tracker (on-prem Jira is not) |
+
+Practice guide: `labs/mattpocock-skills-practice/README.md`.
 
 ### Group 6: `anthropic-skills` (synced user skills)
 
@@ -112,3 +130,4 @@ claude-code-remote (session/env/trigger tools), Claude Docs, Artifact, core tool
 - Group 2: remove Firecrawl; keep Claude Academy and Mermaid Chart as deferred (on-demand). Disconnect Google Calendar (left over from Group 1).
 - Group 3: keep claude.ai GitHub connector (on-demand). Remove all MCP servers bundled with the `engineering` plugin (unused or unreachable). Internal systems are handled from the local machine.
 - Group 4: deferred to the hands-on lab in `labs/engineering-plugin-readonly/`.
+- Group 5: keep `mattpocock-skills`. Practice exercises in `labs/mattpocock-skills-practice/`; duplicates (code-review, tdd, diagnosing-bugs) decided together with Group 4 after the lab.
