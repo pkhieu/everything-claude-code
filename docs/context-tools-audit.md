@@ -19,6 +19,17 @@ Levers:
 - **On-demand**: connector toggled per project or per session; plugin installed only in projects that need it; MCP left deferred.
 - **Remove**: disconnect connector / uninstall plugin / delete skill.
 
+Skill-level levers in Claude Code (from the Claude Code skills docs; verify on your version):
+
+| Lever | Scope | Effect |
+|-------|-------|--------|
+| Frontmatter `disable-model-invocation: true` | One skill | Description not in context; only the user can run it with `/name`. Claude's Skill-tool calls are blocked unless the user's message contains `/name` |
+| Frontmatter `user-invocable: false` | One skill | Hidden from the `/` menu; Claude can still invoke it |
+| Setting `skillOverrides` (`on`, `name-only`, `user-invocable-only`, `off`) | Per skill, per machine (`/skills` writes `.claude/settings.local.json`) | Changes visibility without editing the skill. **Does not affect plugin skills** |
+| Permission rule `Skill(name)` / `Skill(name *)` in `deny` | Per skill | Blocks invocation |
+| Setting `syncClaudeAiSkills: false` (user settings) | All claude.ai-synced skills on that machine | Stops syncing; already-synced skills move to `~/.claude/skills/.trash/` |
+| claude.ai account skill toggle | One synced skill, all surfaces | The only way to turn off a single synced skill everywhere |
+
 ## Inventory
 
 ### Group 1: Google Workspace connectors (deferred)
@@ -109,10 +120,70 @@ Practice guide: `labs/mattpocock-skills-practice/README.md`.
 
 ### Group 6: `anthropic-skills` (synced user skills)
 
-- Doc pipeline: doc-classifier, doc-formatter, doc-visualizer, tech-doc-composer, devops-visual-docs
-- Office files: docx, pptx, xlsx, pdf, google-workspace, docs
-- Browser/desktop: built-in-browser, chrome-browser, computer-use
-- Other: canvas-design, deep-research, import-memory, mcp-builder, morning, skill-creator
+Decisions:
+
+| Skill | Chars/turn | Decision | Note |
+|-------|-----------|----------|------|
+| devops-visual-docs | 974 | Keep-Global | User-created. Main entry for diagrams |
+| tech-doc-composer | 713 | Keep-Global | User-created. Main entry for documents |
+| doc-classifier, doc-formatter, doc-visualizer | 1,797 | Keep, **shorten description** | User-created pipeline stages. See below |
+| docx, pptx, xlsx | ~2,840 | Keep-Global | Not used yet; kept by user choice |
+| pdf | 437 | Keep-Global | Vendor PDFs |
+| built-in-browser, chrome-browser, computer-use | ~2,500 | Keep-Global | Used in the Claude desktop app. No tools for them in Claude Code cloud |
+| skill-creator | 319 | Keep-Global | Skill authoring + evals |
+| mcp-builder | 277 | Keep-Global | For internal MCP servers (e.g. ServiceNow) |
+| google-workspace | 954 | Remove | Connectors removed in Group 1 |
+| morning | 339 | Remove | Needs calendar/email/chat connectors; none reachable |
+| canvas-design | 289 | Remove | Art/posters; diagrams are covered by devops-visual-docs |
+| import-memory | 139 | Remove | One-time migration from another assistant; not needed |
+| docs (Claude Docs) | 1,004 | Pending | |
+| deep-research | 570 | Pending | Overlaps `mattpocock-skills:research` |
+
+#### Pipeline stages: why not user-only
+
+`disable-model-invocation: true` blocks Claude from calling the skill through the Skill tool unless the user's own message contains `/<name>` (Claude Code skills docs). `tech-doc-composer` loads its stages itself, so user-only stages could break the pipeline.
+
+Second problem: overlapping triggers. "format this document" triggers `doc-classifier`, "format this" / "make this a proper runbook" triggers `doc-formatter`, "create a runbook" triggers `tech-doc-composer`. One request can match three skills.
+
+Fix: keep the stages model-invocable, but replace each description with a short pointer that names the pipeline stage and has no trigger keywords. `tech-doc-composer` and `devops-visual-docs` stay the only entry points.
+
+| Skill | Before (chars) | After (chars) |
+|-------|----------------|---------------|
+| doc-classifier | 526 | 242 |
+| doc-formatter | 608 | 193 |
+| doc-visualizer | 663 | 220 |
+
+Saved: ~1142 chars per turn, and no trigger collisions.
+
+New frontmatter (keep the existing `metadata:` block unchanged):
+
+`doc-classifier/SKILL.md`:
+
+```yaml
+name: doc-classifier
+description: >
+  Stage 1 of the tech-doc-composer pipeline: classify raw technical content into a doc_profile (type, audience, depth, suggested format). Use when tech-doc-composer runs this stage, or when the user only asks what kind of document something is.
+```
+
+`doc-formatter/SKILL.md`:
+
+```yaml
+name: doc-formatter
+description: >
+  Stage 2 of the tech-doc-composer pipeline: apply a layout template to raw content plus doc_profile, producing formatted_content and visualizer_hints. Use when tech-doc-composer runs this stage.
+```
+
+`doc-visualizer/SKILL.md`:
+
+```yaml
+name: doc-visualizer
+description: >
+  Stage 3 of the tech-doc-composer pipeline: turn visualizer_hints into Mermaid or HTML/SVG diagrams inside a formatted document; delegates DevOps diagrams to devops-visual-docs. Use when tech-doc-composer runs this stage.
+```
+
+Where to change: these are claude.ai-synced skills. Edit them on claude.ai where they were created. Edits under `~/.claude/skills/synced/` are not saved to the account and are overwritten by the next sync.
+
+After the change, test: "make this a proper runbook: <notes>" should trigger only `tech-doc-composer`, and the composer must still run all three stages.
 
 ### Group 7: Built-in / repo / platform skills
 
@@ -131,3 +202,4 @@ claude-code-remote (session/env/trigger tools), Claude Docs, Artifact, core tool
 - Group 3: keep claude.ai GitHub connector (on-demand). Remove all MCP servers bundled with the `engineering` plugin (unused or unreachable). Internal systems are handled from the local machine.
 - Group 4: deferred to the hands-on lab in `labs/engineering-plugin-readonly/`.
 - Group 5: keep `mattpocock-skills`. Practice exercises in `labs/mattpocock-skills-practice/`; duplicates (code-review, tdd, diagnosing-bugs) decided together with Group 4 after the lab.
+- Group 6: remove google-workspace, morning, canvas-design, import-memory. Keep the rest. Shorten the three pipeline-stage descriptions (not user-only: that would block the composer). Pending: docs, deep-research.
