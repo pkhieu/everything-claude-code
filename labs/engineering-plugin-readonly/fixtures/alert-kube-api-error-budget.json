@@ -1,0 +1,35 @@
+{
+  "receiver": "platform-oncall",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "KubeAPIErrorBudgetBurn",
+        "cluster": "prod-01",
+        "severity": "critical",
+        "long": "1h",
+        "short": "5m"
+      },
+      "annotations": {
+        "summary": "The API server is burning too much error budget.",
+        "description": "apiserver 5xx + slow requests above 14.4x burn rate over 1h on prod-01.",
+        "runbook_url": "https://confluence.example.internal/display/PLAT/Runbook+KubeAPIErrorBudgetBurn"
+      },
+      "startsAt": "2026-11-20T09:42:00Z",
+      "generatorURL": "https://prometheus.example.internal/graph?g0.expr=apiserver_request%3Aburnrate1h"
+    }
+  ],
+  "context": {
+    "prometheus_snapshot": {
+      "sum(rate(apiserver_request_total{cluster=\"prod-01\",code=~\"5..\"}[5m]))": 42.7,
+      "sum(rate(apiserver_request_total{cluster=\"prod-01\"}[5m]))": 610.3,
+      "histogram_quantile(0.99, sum(rate(etcd_disk_wal_fsync_duration_seconds_bucket{cluster=\"prod-01\"}[5m])) by (le, instance))": {
+        "prod-01-etcd-0:2379": 0.006,
+        "prod-01-etcd-1:2379": 0.007,
+        "prod-01-etcd-2:2379": 0.412
+      }
+    },
+    "affected_tenants": ["mes-production", "quality-analytics", "plant-gateway"]
+  }
+}

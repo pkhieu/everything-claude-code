@@ -1,0 +1,10 @@
+Read-only daily platform digest. Use only the Grafana and Jira read tools available to you.
+Do not attempt any other tool. If a tool is not available, say so in the report and continue.
+
+1. Using the Prometheus datasource, run instant queries (no range queries):
+   - count(up == 0) by (job)
+   - sum(ALERTS{alertstate="firing"}) by (alertname, severity)
+2. Search Jira project LAB for issues created or updated in the last 24 hours (max 15):
+   key, summary, status, priority.
+3. Output a Markdown digest with sections: Targets down, Firing alerts, Jira activity,
+   Items needing attention (max 5, with reason). Keep it under 400 words.

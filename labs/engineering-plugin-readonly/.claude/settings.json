@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "defaultMode": "default",
+    "disableBypassPermissionsMode": "disable",
+    "allow": [],
+    "deny": [
+      "mcp__plugin_engineering_slack__*",
+      "mcp__plugin_engineering_linear__*",
+      "mcp__plugin_engineering_asana__*",
+      "mcp__plugin_engineering_atlassian__*",
+      "mcp__plugin_engineering_notion__*",
+      "mcp__plugin_engineering_github__*",
+      "mcp__plugin_engineering_pagerduty__*",
+      "mcp__plugin_engineering_datadog__*",
+      "mcp__grafana__create_*",
+      "mcp__grafana__update_*",
+      "mcp__grafana__delete_*",
+      "mcp__grafana__add_*",
+      "mcp__grafana__query_sql",
+      "mcp__grafana__query_influxdb",
+      "mcp__atlassian__jira_create_*",
+      "mcp__atlassian__jira_update_*",
+      "mcp__atlassian__jira_delete_*",
+      "mcp__atlassian__jira_add_*",
+      "mcp__atlassian__jira_transition_*",
+      "mcp__atlassian__jira_link_*",
+      "mcp__atlassian__confluence_create_*",
+      "mcp__atlassian__confluence_update_*",
+      "mcp__atlassian__confluence_delete_*",
+      "mcp__atlassian__confluence_add_*",
+      "WebFetch",
+      "WebSearch",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(env)",
+      "Bash(printenv *)",
+      "Bash(ssh *)",
+      "Bash(scp *)",
+      "Bash(git push *)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Edit(./.claude/**)",
+      "Edit(./.mcp.json)",
+      "Edit(./config/**)",
+      "Edit(./hooks/**)",
+      "Write(./.claude/**)",
+      "Write(./.mcp.json)",
+      "Write(./config/**)",
+      "Write(./hooks/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__.*|Bash|WebFetch|WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/hooks/mcp-readonly-guard.js\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/hooks/mcp-audit-log.js\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
