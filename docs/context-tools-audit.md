@@ -136,8 +136,8 @@ Decisions:
 | morning | 339 | Remove | Needs calendar/email/chat connectors; none reachable |
 | canvas-design | 289 | Remove | Art/posters; diagrams are covered by devops-visual-docs |
 | import-memory | 139 | Remove | One-time migration from another assistant; not needed |
-| docs (Claude Docs) | 1,004 | Pending | |
-| deep-research | 570 | Pending | Overlaps `mattpocock-skills:research` |
+| docs (Claude Docs) | 1,004 + connector (3 full tool schemas + long instructions) | Keep-Global | User choice: personal docs drafted on claude.ai and exported. **Never put company data in it** (personal account). Repo docs stay as Markdown files |
+| deep-research | 570 | Pending (evaluation running) | Head-to-head vs `mattpocock-skills:research`: `labs/research-skills-eval/` |
 
 #### Pipeline stages: why not user-only
 
@@ -203,3 +203,4 @@ claude-code-remote (session/env/trigger tools), Claude Docs, Artifact, core tool
 - Group 4: deferred to the hands-on lab in `labs/engineering-plugin-readonly/`.
 - Group 5: keep `mattpocock-skills`. Practice exercises in `labs/mattpocock-skills-practice/`; duplicates (code-review, tdd, diagnosing-bugs) decided together with Group 4 after the lab.
 - Group 6: remove google-workspace, morning, canvas-design, import-memory. Keep the rest. Shorten the three pipeline-stage descriptions (not user-only: that would block the composer). Pending: docs, deep-research.
+- Group 6 (follow-up): keep Claude Docs skill + connector for personal documents only. deep-research vs research evaluation delegated to a separate session; results in `labs/research-skills-eval/RESULTS.md`.
